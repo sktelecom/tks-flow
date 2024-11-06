@@ -90,15 +90,6 @@ spec:
                 - name: user_names
                   value: '["admin"]'
 
-        - - name: init-harbor-db
-            template: init-harbor-db
-            arguments:
-              parameters:
-                - name: db_harbor_password
-                  value: "{{ workflow.parameters.db_common_password }}"
-                - name: db_host
-                  value: "{{ workflow.parameters.db_host }}"
-
         - - name: install-tks-api-and-harbor
             templateRef:
               name: create-application
