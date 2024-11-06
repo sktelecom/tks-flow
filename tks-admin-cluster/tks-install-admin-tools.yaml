@@ -69,40 +69,39 @@ spec:
                       { "app_group": "tks-admin-tools", "path": "keycloak", "namespace": "keycloak", "target_cluster": "" }
                     ]
 
-        - - name: configure-keycloak
-            templateRef:
-              name: set-admin-cluster
-              template: main
-            arguments:
-              parameters:
-                - name: server_url
-                  value: "{{workflow.parameters.keycloak_url}}"
-                - name: target_realm_name
-                  value: "master"
-                - name: target_client_id
-                  value: "admin-cluster-k8s-api"
-                - name: keycloak_credential_secret_name
-                  value: "keycloak"
-                - name: keycloak_credential_secret_namespace
-                  value: "keycloak"
-                - name: client_role_name
-                  value: "system:masters"
-                - name: user_names
-                  value: '["admin"]'
+#        - - name: configure-keycloak
+#            templateRef:
+#              name: set-admin-cluster
+#              template: main
+#            arguments:
+#              parameters:
+#                - name: server_url
+#                  value: "{{workflow.parameters.keycloak_url}}"
+#                - name: target_realm_name
+#                  value: "master"
+#                - name: target_client_id
+#                  value: "admin-cluster-k8s-api"
+#                - name: keycloak_credential_secret_name
+#                  value: "keycloak"
+#                - name: keycloak_credential_secret_namespace
+#                  value: "keycloak"
+#                - name: client_role_name
+#                  value: "system:masters"
+#                - name: user_names
+#                  value: '["admin"]'
 
-        - - name: install-tks-api-and-harbor
-            templateRef:
-              name: create-application
-              template: installApps
-            arguments:
-              parameters:
-                - name: list
-                  value: |
-                    [
-                      { "app_group": "tks-admin-tools", "path": "tks-apis", "namespace": "tks", "target_cluster": "" },
-                      { "app_group": "tks-admin-tools", "path": "harbor", "namespace": "harbor", "target_cluster": "" }
-                    ]
-
+#        - - name: install-tks-api-and-harbor
+#            templateRef:
+#              name: create-application
+#              template: installApps
+#            arguments:
+#              parameters:
+#                - name: list
+#                  value: |
+#                    [
+#                      { "app_group": "tks-admin-tools", "path": "tks-apis", "namespace": "tks", "target_cluster": "" }
+#                    ]
+#
     #######################
     # Template Definition #
     #######################
