@@ -353,7 +353,7 @@ spec:
           [ -d ${member} ] || git clone ${repository_base}${member}
           cd ${member}
 
-          yq -i e "del(.charts[] | select(.name == \"thanos-config\").override.objectStorage.rawConig)" ${member}/lma/site-values.yaml
+          yq -i e "del(.charts[] | select(.name == \"thanos-config\").override.objectStorage.rawConfig)" ${member}/lma/site-values.yaml
           yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.type=\"s3\")" ${member}/lma/site-values.yaml
           yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.rawConfig.endpoint=\"s3.ap-northeast-2.amazonaws.com\")" ${member}/lma/site-values.yaml
           yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.rawConfig.region=\"ap-northeast-2\")" ${member}/lma/site-values.yaml
@@ -663,7 +663,7 @@ spec:
         [ -d ${current_cluster} ] || git clone ${repository_base}${current_cluster}
         cd ${current_cluster}
 
-        yq -i e "del(.charts[] | select(.name == \"thanos-config\").override.objectStorage.rawConig)" ${current_cluster}/lma/site-values.yaml
+        yq -i e "del(.charts[] | select(.name == \"thanos-config\").override.objectStorage.rawConfig)" ${current_cluster}/lma/site-values.yaml
         yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.type=\"s3\")" ${current_cluster}/lma/site-values.yaml
         yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.rawConfig.endpoint=\"s3.ap-northeast-2.amazonaws.com\")" ${current_cluster}/lma/site-values.yaml
         yq -i e ".charts |= map(select(.name == \"thanos-config\").override.objectStorage.rawConfig.region=\"ap-northeast-2\")" ${current_cluster}/lma/site-values.yaml
