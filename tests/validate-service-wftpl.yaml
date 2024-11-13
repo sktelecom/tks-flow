@@ -48,7 +48,7 @@ spec:
              exit 1
           fi
 
-          kubectl get po -n lma | grep -Ev "Running|Completed|NAME"
+          kubectl get po -n taco-system | grep -Ev "Running|Completed|NAME"
           if [[ $? != 1 ]]; then
             echo "ERROR - invalid pod status"
             exit 1

@@ -336,15 +336,15 @@ spec:
           kube_secret=$(kubectl get secret -n ${cluster_id} ${cluster_id}-tks-kubeconfig -o jsonpath="{.data.value}" | base64 -d)
           cat <<< "$kube_secret" > kubeconfig
 
-          while ! kubectl --kubeconfig=kubeconfig get svc -n lma grafana --ignore-not-found; do
+          while ! kubectl --kubeconfig=kubeconfig get svc -n taco-system grafana --ignore-not-found; do
             echo "Waiting for the grafana service to appear in cluster ${cluster_id} (5s)"
             sleep 5
           done
 
           grafana_ep_secret=$(kubectl get secret -n ${cluster_id} tks-endpoint-secret -o jsonpath='{.data.grafana}'| base64 -d ) || grafana_ep_secret=""
           if [ "$grafana_ep_secret" == "" ]; then
-            while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n lma grafana -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]; do
-              if [ "$(kubectl --kubeconfig=kubeconfig get svc -n lma grafana -o jsonpath='{.spec.type}')" != "LoadBalancer" ]; then
+            while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n taco-system grafana -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]; do
+              if [ "$(kubectl --kubeconfig=kubeconfig get svc -n taco-system grafana -o jsonpath='{.spec.type}')" != "LoadBalancer" ]; then
                 log "FAIL" "A service for the grafana in ${cluster_id} is not configured properly.(No LoadBalancer)"
                 exit -1
               fi
@@ -353,7 +353,7 @@ spec:
               sleep 3
             done
 
-            endpoint=$(kubectl --kubeconfig=kubeconfig get svc -n lma grafana -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+            endpoint=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system grafana -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
           else
             endpoint=${grafana_ep_secret}
           fi

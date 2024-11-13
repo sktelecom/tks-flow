@@ -110,9 +110,9 @@ spec:
           - name: list
             value: |
               [
-                { "app_group": "lma", "path": "minio", "namespace": "lma", "target_cluster": "" },
-                { "app_group": "lma", "path": "loki", "namespace": "lma", "target_cluster": "" },
-                { "app_group": "lma", "path": "loki-user", "namespace": "lma", "target_cluster": "" }
+                { "app_group": "lma", "path": "minio", "namespace": "taco-system", "target_cluster": "" },
+                { "app_group": "lma", "path": "loki", "namespace": "taco-system", "target_cluster": "" },
+                { "app_group": "lma", "path": "loki-user", "namespace": "taco-system", "target_cluster": "" }
               ]
         when: "{{workflow.parameters.object_store}} == minio"
 
@@ -148,9 +148,9 @@ spec:
           - name: list
             value: |
               [
-                { "app_group": "lma", "path": "thanos-config", "namespace": "lma", "target_cluster": "" },
-                { "app_group": "lma", "path": "thanos", "namespace": "lma", "target_cluster": "" },
-                { "app_group": "lma", "path": "grafana", "namespace": "lma", "target_cluster": "" }
+                { "app_group": "lma", "path": "thanos-config", "namespace": "taco-system", "target_cluster": "" },
+                { "app_group": "lma", "path": "thanos", "namespace": "taco-system", "target_cluster": "" },
+                { "app_group": "lma", "path": "grafana", "namespace": "taco-system", "target_cluster": "" }
               ]
 
     - - name: update-status-done
@@ -223,8 +223,8 @@ spec:
             value: |
               [
                 { "app_group": "lma", "path": "lma-bucket", "namespace": "taco-system", "target_cluster": "" },
-                { "app_group": "lma", "path": "loki", "namespace": "lma", "target_cluster": "" },
-                { "app_group": "lma", "path": "loki-user", "namespace": "lma", "target_cluster": "" }
+                { "app_group": "lma", "path": "loki", "namespace": "taco-system", "target_cluster": "" },
+                { "app_group": "lma", "path": "loki-user", "namespace": "taco-system", "target_cluster": "" }
               ]
 
   - name: update-eps-for-thanos
@@ -473,9 +473,9 @@ spec:
         LOKI_SERVICE=$(kubectl get secret -n ${primary_cluster} tks-endpoint-secret -o jsonpath='{.data.loki}'| base64 -d )
 
         if [[ "$LOKI_SERVICE" == "" ]]; then
-          while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n lma loki-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
+          while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
           do
-            if [ "$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-loki-distributed-gateway -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
+            if [ "$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-loki-distributed-gateway -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
               log "FAIL" "The infras on primary are not cofigured properly.(No LoadBalancer)"
               exit -1
             fi
@@ -484,8 +484,8 @@ spec:
             sleep 3
           done
 
-          LOKI_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          LOKI_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-loki-distributed-gateway -o jsonpath="{.spec.ports[0].port}")
+          LOKI_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+          LOKI_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-loki-distributed-gateway -o jsonpath="{.spec.ports[0].port}")
         else
           LOKI_HOST=$(echo $LOKI_SERVICE | awk -F : '{print $1}')
           LOKI_PORT=$(echo $LOKI_SERVICE | awk -F : '{print $2}')
@@ -497,9 +497,9 @@ spec:
         LOKI_USER_SERVICE=$(kubectl get secret -n ${primary_cluster} tks-endpoint-secret -o jsonpath='{.data.loki_user}'| base64 -d )
 
         if [[ "$LOKI_USER_SERVICE" == "" ]]; then
-          while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n lma loki-user-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
+          while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-user-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
           do
-            if [ "$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-user-loki-distributed-gateway -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
+            if [ "$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-user-loki-distributed-gateway -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
               log "FAIL" "The infras on primary are not cofigured properly.(No LoadBalancer)"
               exit -1
             fi
@@ -508,8 +508,8 @@ spec:
             sleep 3
           done
 
-          LOKI_USER_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-user-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          LOKI_USER_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n lma loki-user-loki-distributed-gateway -o jsonpath="{.spec.ports[0].port}")
+          LOKI_USER_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-user-loki-distributed-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+          LOKI_USER_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system loki-user-loki-distributed-gateway -o jsonpath="{.spec.ports[0].port}")
         else
           LOKI_USER_HOST=$(echo $LOKI_USER_SERVICE | awk -F : '{print $1}')
           LOKI_USER_PORT=$(echo $LOKI_USER_SERVICE | awk -F : '{print $2}')
@@ -521,8 +521,8 @@ spec:
         if [[ "${primary_cluster}" == "${current_cluster}" ]] && [[ "$OBJECT_STORE" == "minio" ]]; then
           S3_SERVICE=$(kubectl get secret -n ${primary_cluster} tks-endpoint-secret -o jsonpath='{.data.minio}'| base64 -d )
           if [[ "$S3_SERVICE" == "" ]]; then
-            S3_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n lma minio -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-            S3_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n lma minio -o jsonpath="{.spec.ports[0].port}")
+            S3_HOST=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system minio -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+            S3_PORT=$(kubectl --kubeconfig=kubeconfig get svc -n taco-system minio -o jsonpath="{.spec.ports[0].port}")
             S3_SERVICE=${S3_HOST}:${S3_PORT}
           fi
         fi
@@ -741,10 +741,10 @@ spec:
           PROMETHEUS_URL=$(kubectl get secret -n ${member} tks-endpoint-secret -o jsonpath='{.data.prometheus}'| base64 -d )
           if [[ "$PROMETHEUS_URL" != "" ]]; then
             eplist="${eplist}, \"${PROMETHEUS_URL}\""
-          elif [ `kubectl --kubeconfig=kubeconfig get svc -n lma lma-thanos-external --ignore-not-found=true | grep -v NAME | wc -l ` -eq 1 ]; then
-            while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n lma lma-thanos-external -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
+          elif [ `kubectl --kubeconfig=kubeconfig get svc -n taco-system lma-thanos-external --ignore-not-found=true | grep -v NAME | wc -l ` -eq 1 ]; then
+            while [ -z $(kubectl --kubeconfig=kubeconfig get svc -n taco-system lma-thanos-external -o jsonpath="{.status.loadBalancer.ingress[*].hostname}") ]
             do
-              if [ "$(kubectl --kubeconfig=kubeconfig get svc -n lma lma-thanos-external -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
+              if [ "$(kubectl --kubeconfig=kubeconfig get svc -n taco-system lma-thanos-external -o jsonpath="{.spec.type}")" -neq "LoadBalancer" ]; then
                 log "FAIL" "A service for the thanos-sidcar in ${member} is not cofigured properly.(No LoadBalancer)"
                 exit -1
               fi
@@ -753,7 +753,7 @@ spec:
               sleep 3
             done
 
-            eplist="${eplist}, \"$(kubectl --kubeconfig=kubeconfig get svc -n lma lma-thanos-external -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"):$(kubectl --kubeconfig=kubeconfig get svc -n lma lma-thanos-external -o jsonpath="{.spec.ports[0].port}")\""
+            eplist="${eplist}, \"$(kubectl --kubeconfig=kubeconfig get svc -n taco-system lma-thanos-external -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"):$(kubectl --kubeconfig=kubeconfig get svc -n taco-system lma-thanos-external -o jsonpath="{.spec.ports[0].port}")\""
           else
             log "WARN" "Cluster(${member}) has no prometheus sidecar"
           fi
@@ -1068,7 +1068,7 @@ spec:
         kubectl --kubeconfig /kube/value get secret -n ${cluster_id} ${cluster_id}-tks-kubeconfig -o jsonpath="{.data.value}" | base64 -d > ~/kubeconfig
         export KUBECONFIG=~/kubeconfig
 
-        kubectl delete job -n lma empty-buckets-before-delete-them --ignore-not-found=true
+        kubectl delete job -n taco-system empty-buckets-before-delete-them --ignore-not-found=true
         cat <<EOF | kubectl apply -f -
         apiVersion: batch/v1
         kind: Job
@@ -1099,12 +1099,12 @@ spec:
           backoffLimit: 4
         EOF
 
-        while [ $(kubectl get -n lma job empty-buckets-before-delete-them -o jsonpath='{.status.conditions[0].type}'|wc -c) -eq 0 ]; do
+        while [ $(kubectl get -n taco-system job empty-buckets-before-delete-them -o jsonpath='{.status.conditions[0].type}'|wc -c) -eq 0 ]; do
           echo "A job is not completed. wait 10 seconds...."
           sleep 10
         done
 
-        if [[ $(kubectl get -n lma job empty-buckets-before-delete-them -o jsonpath='{.status.conditions[0].type}') == "Complete" ]]; then
+        if [[ $(kubectl get -n taco-system job empty-buckets-before-delete-them -o jsonpath='{.status.conditions[0].type}') == "Complete" ]]; then
           exit 0
         else
           exit -1
