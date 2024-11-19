@@ -553,14 +553,14 @@ spec:
 
           # 2. grafana datasource on primary_cluster
           if [[ "${member}" == "${primary_cluster}" ]]; then
-            yq -i e  ".global.grafanaDatasourceMetric=\"thanos-query.lma:9090\"" ${member}/lma/site-values.yaml
+            yq -i e  ".global.grafanaDatasourceMetric=\"thanos-query:9090\"" ${member}/lma/site-values.yaml
             yq -i e  ".global.TksWebhookUrl=\"{{workflow.parameters.alert_tks}}\"" ${member}/lma/site-values.yaml
             yq -i e  ".global.SlackUrl=\"{{workflow.parameters.alert_slack}}\"" ${member}/lma/site-values.yaml
             if [[ "$OBJECT_STORE" == "minio" ]]; then
               yq -i e  ".global.s3Service=\"${S3_SERVICE}\"" ${member}/lma/site-values.yaml
             fi
           else
-            yq -i e  ".global.grafanaDatasourceMetric=\"lma-prometheus.lma:9090\"" ${member}/lma/site-values.yaml
+            yq -i e  ".global.grafanaDatasourceMetric=\"lma-prometheus:9090\"" ${member}/lma/site-values.yaml
           fi
 
           cd -
