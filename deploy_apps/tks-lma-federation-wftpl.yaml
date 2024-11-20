@@ -57,7 +57,7 @@ spec:
         arguments:
           parameters:
           - name: target_namespace
-            value: lma
+            value: taco-system
 
     - - name: get-clusters-in-contract
         templateRef:
